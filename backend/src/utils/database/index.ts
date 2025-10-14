@@ -25,7 +25,14 @@ let pool: sql.ConnectionPool | null = null;
  */
 async function getPool(): Promise<sql.ConnectionPool> {
   if (!pool) {
-    pool = await sql.connect(config.database);
+    pool = await sql.connect({
+      server: config.database.host,
+      port: config.database.port,
+      user: config.database.user,
+      password: config.database.password,
+      database: config.database.database,
+      options: config.database.options,
+    });
   }
   return pool;
 }
@@ -65,11 +72,16 @@ export async function dbRequest(
         if (resultSetNames && resultSetNames.length > 0) {
           const namedResults: any = {};
           resultSetNames.forEach((name, index) => {
-            namedResults[name] = result.recordsets[index] || [];
+            if (Array.isArray(result.recordsets)) {
+              namedResults[name] = result.recordsets[index] || [];
+            }
           });
           return namedResults;
         }
-        return result.recordsets;
+        if (Array.isArray(result.recordsets)) {
+          return result.recordsets[0] || [];
+        }
+        return [];
       case ExpectedReturn.None:
         return null;
       default:

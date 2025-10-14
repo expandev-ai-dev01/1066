@@ -4,4 +4,5 @@
  * Central export point for all business logic services
  */
 
-export {};
+export * from './task';
+export * from './category';

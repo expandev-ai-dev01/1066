@@ -7,6 +7,7 @@
 
 export const ROUTES = {
   HOME: '/',
+  TASK_CREATE: '/tasks/new',
   NOT_FOUND: '*',
 } as const;
 
